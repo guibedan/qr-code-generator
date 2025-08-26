@@ -18,15 +18,6 @@ jobs:
       - name: Checkout source
         uses: actions/checkout@v4
 
-      - name: Setup Java
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-
-      - name: Build Project
-        run: mvn clean install -DskipTests
-
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v3
         with:
@@ -47,12 +38,8 @@ jobs:
           IMAGE_TAG: ${{ github.sha }}
           REPOSITORY: ${{ env.ECR_REPOSITORY }}
         run: |
-          # Build a docker container and
-          # push it to ECR so that it can
-          # be deployed to ECS.
           docker build -t $ECR_REGISTRY/$REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$REPOSITORY:$IMAGE_TAG
-          echo "image=$ECR_REGISTRY/$REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
       - name: Download task definition
         run: |
           aws ecs describe-task-definition --task-definition ${{ env.ECS_TASK_DEFINITION }} \
