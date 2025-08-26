@@ -4,6 +4,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Base64;
 
+import com.guibedan.qr.code.generator.exceptions.GlobalExceptionHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.google.zxing.BarcodeFormat;
@@ -18,7 +21,10 @@ import com.guibedan.qr.code.generator.dto.ResponseDataDto;
 @Service
 public class QrCodeGeneratorService {
 
+	private static final Logger logger = LoggerFactory.getLogger(QrCodeGeneratorService.class);
+
 	public ResponseDataDto getQrCode(QrCodeDataRequestDto data) throws WriterException, IOException {
+		logger.info("Generating QRCode");
 		ResponseDataDto response = new ResponseDataDto();
 
 		QRCodeWriter barcodeWriter = new QRCodeWriter();

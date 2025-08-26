@@ -19,7 +19,7 @@ import jakarta.validation.Valid;
 
 @Validated
 @RestController
-@RequestMapping("/api/v1/qr-code")
+@RequestMapping("/v1/api/qr-code")
 public class QrCodeGeneratorController {
 
 	@Autowired
