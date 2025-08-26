@@ -3,6 +3,8 @@ package com.guibedan.qr.code.generator.exceptions;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -17,6 +19,8 @@ import com.guibedan.qr.code.generator.dto.ResponseDataDto;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+	private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
 	// Tratamento de erros de validação (400 - BAD_REQUEST)
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<ResponseDataDto> handleValidationExceptions(MethodArgumentNotValidException ex) {
@@ -28,6 +32,7 @@ public class GlobalExceptionHandler {
 		response.setSuccess(false);
 		response.setData(errors);
 
+		logger.warn("Required fields were not filled in");
 		return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 	}
 
@@ -41,6 +46,7 @@ public class GlobalExceptionHandler {
 		errors.put("error", "Method '" + ex.getMethod() + "' is not supported for this endpoint.");
 		response.setData(errors);
 
+		logger.error("Method '{}' is not supported for this endpoint.", ex.getMethod());
 		return new ResponseEntity<>(response, HttpStatus.METHOD_NOT_ALLOWED);
 	}
 
@@ -54,7 +60,7 @@ public class GlobalExceptionHandler {
 		errors.put("error", ex.getReason());
 		response.setData(errors);
 
-		ex.printStackTrace();
+		logger.error("Generic error response status", ex);
 		return new ResponseEntity<>(response, ex.getStatusCode());
 	}
 
@@ -68,6 +74,7 @@ public class GlobalExceptionHandler {
 		errors.put("error", "An unexpected error occurred: " + ex.getMessage());
 		response.setData(errors);
 
+		logger.error("An unexpected error occurred", ex);
 		return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
@@ -81,6 +88,7 @@ public class GlobalExceptionHandler {
 		errors.put("error", "Invalid or missing request body. Please provide 'title' and 'link' in the request body.");
 		response.setData(errors);
 
+		logger.error("Invalid or missing request body. Please provide 'title' and 'link' in the request body.");
 		return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 	}
 }
